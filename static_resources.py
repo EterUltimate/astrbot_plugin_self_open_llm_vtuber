@@ -28,7 +28,15 @@ def _build_handler(routes: dict[str, Path]):
 
             for prefix in sorted_prefixes:
                 root = normalized_routes[prefix]
-                if request_path == prefix or request_path.startswith(prefix + "/"):
+                # Special-case the root prefix: "/" + "/" produces "//" which
+                # would never match.  Every request path starts with "/", so
+                # the root route should act as a catch-all (lowest priority
+                # thanks to the length-descending sort).
+                if prefix == "/":
+                    matched = True
+                else:
+                    matched = request_path == prefix or request_path.startswith(prefix + "/")
+                if matched:
                     relative = request_path[len(prefix) :].lstrip("/\\")
                     target = (root / relative).resolve()
                     try:
