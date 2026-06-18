@@ -12,6 +12,7 @@ The script expects Node.js (>= 18) and npm to be available on PATH.
 from __future__ import annotations
 
 import argparse
+import platform
 import shutil
 import subprocess
 import sys
@@ -22,10 +23,14 @@ WEB_SRC_DIR = PLUGIN_DIR / "web"
 WEBUI_OUT_DIR = PLUGIN_DIR / "webui"
 WEB_BUILD_DIR = WEB_SRC_DIR / "dist" / "web"
 
+_IS_WINDOWS = platform.system() == "Windows"
+
 
 def _run(cmd: list[str], cwd: Path) -> None:
     print(f">>> {' '.join(cmd)}  (cwd={cwd})")
-    result = subprocess.run(cmd, cwd=str(cwd))
+    # On Windows, `npm` is a `.cmd` script and must be invoked through the
+    # shell (cmd.exe) so that PATH resolution finds it.
+    result = subprocess.run(cmd, cwd=str(cwd), shell=_IS_WINDOWS)
     if result.returncode != 0:
         raise SystemExit(f"Command failed with exit code {result.returncode}: {' '.join(cmd)}")
 
