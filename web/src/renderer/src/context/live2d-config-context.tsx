@@ -129,7 +129,14 @@ export function Live2DConfigProvider({ children }: { children: React.ReactNode }
       return;
     }
 
-    const finalScale = Number(info.kScale || 0.5) * 2;
+    const incomingScale = Number(info.kScale || 0.5);
+    const currentScale = info.url === modelInfo?.url
+      ? Number(modelInfo?.kScale)
+      : undefined;
+    const finalScale = currentScale !== undefined
+      && Math.abs(currentScale - incomingScale) < 0.0001
+      ? incomingScale
+      : incomingScale * 2;
 
     setModelInfoState({
       ...info,

@@ -26,6 +26,7 @@ from .adapter.history_bridge import ConversationHistoryBridge
 from .adapter.media_service import MediaService
 from .adapter.message_factory import MessageFactory
 from .adapter.model_info import build_static_routes, list_background_files
+from .adapter.live2d_model_registry import sync_live2d_model_registry
 from .adapter.runtime_state import RuntimeState
 from .adapter.session_state import SessionState
 from .adapter.transport_ws import WebSocketTransport
@@ -136,6 +137,8 @@ class OLVPetPlatformAdapter(Platform):
         )
         self.frontend_compat_handler = FrontendCompatHandler(
             background_files_getter=lambda: list_background_files(FRONTEND_ASSETS_DIR),
+            live2d_model_entries_getter=self._get_live2d_model_entries,
+            refresh_live2d_models=self._refresh_live2d_model_registry,
             history_bridge=self.history_bridge,
         )
         self.transport = WebSocketTransport(
@@ -319,6 +322,19 @@ class OLVPetPlatformAdapter(Platform):
             send_json=self._send_json,
             refresh_and_send_model=self._refresh_and_send_current_model_and_conf,
         )
+
+    def _refresh_live2d_model_registry(self) -> list[dict[str, Any]]:
+        return sync_live2d_model_registry(
+            plugin_dir=PLUGIN_DIR,
+            live2ds_dir=LIVE2DS_DIR,
+        )
+
+    def _get_live2d_model_entries(self) -> list[dict[str, Any]]:
+        try:
+            return self._refresh_live2d_model_registry()
+        except Exception as exc:
+            logger.warning("Failed to refresh Live2D model registry: %s", exc)
+            return []
 
     async def terminate(self) -> None:
         logger.info("Desktop VTuber Adapter terminate() called")

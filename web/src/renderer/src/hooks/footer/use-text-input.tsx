@@ -7,6 +7,8 @@ import { useVAD } from '@/context/vad-context';
 import { useMediaCapture } from '@/hooks/utils/use-media-capture';
 import { markFrontendRequestStart } from '@/utils/timing-debug';
 
+type TextInputElement = HTMLInputElement | HTMLTextAreaElement;
+
 export function useTextInput() {
   const [inputText, setInputText] = useState('');
   const [isComposing, setIsComposing] = useState(false);
@@ -18,7 +20,7 @@ export function useTextInput() {
   const { stopMic, autoStopMic } = useVAD();
   const { captureAllMedia } = useMediaCapture();
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<TextInputElement>) => {
     setInputText(e.target.value);
   };
 
@@ -52,7 +54,7 @@ export function useTextInput() {
     }
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyPress = (e: React.KeyboardEvent<TextInputElement>) => {
     if (isComposing || (e.nativeEvent as any)?.isComposing) return;
 
     if (e.key === 'Enter' && !e.shiftKey) {

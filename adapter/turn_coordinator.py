@@ -11,6 +11,7 @@ from astrbot.core.platform.message_type import MessageType
 from astrbot.core.utils.active_event_registry import active_event_registry
 
 from .expression_action_builder import build_expression_actions
+from .frontend_compat import SUPPORTED_COMPAT_MESSAGE_TYPES
 from .inline_expression import (
     normalize_base_expression_key,
     normalize_motion_id,
@@ -81,15 +82,7 @@ class TurnCoordinator:
     async def handle_msg(self, message: dict[str, Any]) -> None:
         msg_type = message.get("type")
 
-        if msg_type in {
-            "fetch-backgrounds",
-            "fetch-history-list",
-            "create-new-history",
-            "fetch-and-set-history",
-            "delete-history",
-            "heartbeat",
-            "audio-play-start",
-        }:
+        if msg_type in SUPPORTED_COMPAT_MESSAGE_TYPES:
             await self._handle_frontend_compat(message)
             return
 

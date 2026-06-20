@@ -37,7 +37,8 @@
       "selectModel": "Select a model",
       "modelListError": "Unable to read live2ds/model_dict.json",
       "pointerInteractive": "Pointer Interactive",
-      "scrollToResize": "Enable Scroll to Resize"
+      "scrollToResize": "Enable Scroll to Resize",
+      "refreshModels": "Refresh / Import Models"
     },
     "asr": {
       "microphone": "Input Microphone",
@@ -79,7 +80,8 @@
     "cameraControl": "Click to start camera",
     "cameraStopping": "Click to stop camera",
     "screenControl": "Click to start screen capture",
-    "screenStopping": "Click to stop screen capture"
+    "screenStopping": "Click to stop screen capture",
+    "sendMessage": "Send message"
   },
   "sidebar": {
     "camera": "Camera",
@@ -126,4 +128,4 @@
     "connecting": "Connecting",
     "clickToReconnect": "Click to Reconnect"
   }
-} 
+}

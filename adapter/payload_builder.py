@@ -40,6 +40,14 @@ def build_error(message: str) -> dict[str, Any]:
     return {"type": "error", "message": message}
 
 
+def build_webui_settings(settings: dict[str, Any]) -> dict[str, Any]:
+    return {"type": "webui-settings", "settings": settings}
+
+
+def build_live2d_models(models: list[dict[str, Any]]) -> dict[str, Any]:
+    return {"type": "live2d-models", "models": models}
+
+
 def build_audio_payload(
     audio_path: str,
     audio_url: str | None,

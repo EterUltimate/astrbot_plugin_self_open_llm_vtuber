@@ -5,6 +5,7 @@ import {
 import { BsMicFill, BsMicMuteFill, BsPaperclip } from 'react-icons/bs';
 import { IoHandRightSharp } from 'react-icons/io5';
 import { FiChevronDown } from 'react-icons/fi';
+import { LuSend } from 'react-icons/lu';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { InputGroup } from '@/components/ui/input-group';
@@ -35,6 +36,7 @@ interface MessageInputProps {
   onKeyDown: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void
   onCompositionStart: () => void
   onCompositionEnd: () => void
+  onSend: () => void
 }
 
 // Reusable components
@@ -83,6 +85,7 @@ const MessageInput = memo(({
   onKeyDown,
   onCompositionStart,
   onCompositionEnd,
+  onSend,
 }: MessageInputProps) => {
   const { t } = useTranslation();
 
@@ -105,6 +108,14 @@ const MessageInput = memo(({
           placeholder={t('footer.typeYourMessage')}
           {...footerStyles.footer.input}
         />
+        <IconButton
+          aria-label={t('footer.sendMessage')}
+          variant="ghost"
+          {...footerStyles.footer.sendButton}
+          onClick={onSend}
+        >
+          <LuSend size="18" />
+        </IconButton>
       </Box>
     </InputGroup>
   );
@@ -120,6 +131,7 @@ function Footer({ isCollapsed = false, onToggle }: FooterProps): JSX.Element {
     handleKeyPress,
     handleCompositionStart,
     handleCompositionEnd,
+    handleSend,
     handleInterrupt,
     handleMicToggle,
     micOn,
@@ -148,6 +160,7 @@ function Footer({ isCollapsed = false, onToggle }: FooterProps): JSX.Element {
             onKeyDown={handleKeyPress}
             onCompositionStart={handleCompositionStart}
             onCompositionEnd={handleCompositionEnd}
+            onSend={handleSend}
           />
         </HStack>
       </Box>

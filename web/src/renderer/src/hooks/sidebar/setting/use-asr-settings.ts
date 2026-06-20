@@ -1,8 +1,10 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { createListCollection } from '@chakra-ui/react';
 import { useVAD, VADSettings } from '@/context/vad-context';
+import { usePluginSettings } from '@/context/plugin-settings-context';
 
 export const useASRSettings = () => {
+  const { saveWebUISettings } = usePluginSettings();
   const {
     settings,
     updateSettings,
@@ -77,6 +79,17 @@ export const useASRSettings = () => {
   const handleSave = (): void => {
     updateSettings(localSettingsRef.current);
     void setSelectedMicId(localSelectedMicId);
+    saveWebUISettings({
+      asr: {
+        selected_mic_id: localSelectedMicId,
+        auto_stop_mic: localVoiceInterruption,
+        auto_start_mic_on: localAutoStartMic,
+        auto_start_mic_on_conv_end: localAutoStartMicOnConvEnd,
+        positive_speech_threshold: Number(localSettingsRef.current.positiveSpeechThreshold),
+        negative_speech_threshold: Number(localSettingsRef.current.negativeSpeechThreshold),
+        redemption_frames: Number(localSettingsRef.current.redemptionFrames),
+      },
+    });
     originalSettingsRef.current = localSettingsRef.current;
     originalAutoStopMicRef.current = localVoiceInterruption;
     originalAutoStartMicOnRef.current = localAutoStartMic;

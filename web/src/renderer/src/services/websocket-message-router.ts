@@ -152,6 +152,8 @@ type RouterDeps = {
   setForceNewMessage: (value: boolean) => void;
   setBrowserViewData: (value: any) => void;
   setBackgroundFiles?: (files: any) => void;
+  setWebUISettings?: (value: any) => void;
+  setLive2DModelEntries?: (value: any) => void;
   sendMessage: (message: object) => void;
 };
 
@@ -177,6 +179,8 @@ export const createWebSocketMessageHandler = ({
   setForceNewMessage,
   setBrowserViewData,
   setBackgroundFiles,
+  setWebUISettings,
+  setLive2DModelEntries,
   sendMessage,
 }: RouterDeps) => {
   return (message: MessageEvent) => {
@@ -202,6 +206,16 @@ export const createWebSocketMessageHandler = ({
       case 'background-files':
         if (message.files && setBackgroundFiles) {
           setBackgroundFiles(message.files);
+        }
+        break;
+      case 'webui-settings':
+        if (message.settings && setWebUISettings) {
+          setWebUISettings(message.settings);
+        }
+        break;
+      case 'live2d-models':
+        if (message.models && setLive2DModelEntries) {
+          setLive2DModelEntries(message.models);
         }
         break;
       case 'audio':

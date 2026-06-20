@@ -47,8 +47,6 @@ function General({ onSave, onCancel }: GeneralProps): JSX.Element {
     settings,
     handleSettingChange,
     handleCameraToggle,
-    showSubtitle,
-    setShowSubtitle,
   } = useGeneralSettings({
     bgUrlContext,
     baseUrl,
@@ -81,8 +79,8 @@ function General({ onSave, onCancel }: GeneralProps): JSX.Element {
 
       <SwitchField
         label={t("settings.general.showSubtitle")}
-        checked={showSubtitle}
-        onChange={setShowSubtitle}
+        checked={settings.showSubtitle}
+        onChange={(checked) => handleSettingChange("showSubtitle", checked)}
       />
 
       {!settings.useCameraBackground && (

@@ -180,10 +180,13 @@ npm run build:web
 
 ### 添加新模型后下拉菜单不显示
 
-插件已支持**自动同步**：
-1. 确保模型已添加到 `live2ds/model_dict.json`
-2. **重启 AstrBot** — 插件会自动同步模型列表到配置面板
-3. 或手动运行 `同步模型选项.bat`（Windows）/ `python sync_model_options.py`
+插件已支持**自动识别 Cubism Live2D 模型**：
+1. 将模型目录放到 `live2ds/<模型名>/`
+2. 确认目录内包含 `*.model3.json`，并且文件引用了 `.moc3` 与贴图
+3. 在 WebUI 的 Live2D 设置页点击“刷新/识别模型”，或重启 AstrBot
+4. 也可以手动运行 `python sync_model_options.py`
+
+自动识别会补全 `live2ds/model_dict.json` 与插件设置页的模型下拉选项。已有手写模型配置不会被覆盖。
 
 ## 文档索引
 

@@ -79,5 +79,173 @@
     "description": "VAD 平滑窗口大小。",
     "type": "int",
     "default": 5
+  },
+  "webui_settings": {
+    "description": "WebUI 设置。这里的值会与浏览器内 WebUI 设置页双向同步。",
+    "type": "object",
+    "default": {
+      "general": {
+        "language": "zh",
+        "background_url": "",
+        "use_camera_background": false,
+        "show_subtitle": true,
+        "ws_url": "ws://127.0.0.1:12396",
+        "base_url": "http://127.0.0.1:12397",
+        "image_compression_quality": 0.8,
+        "image_max_width": 0
+      },
+      "live2d": {
+        "pointer_interactive": true,
+        "scroll_to_resize": true
+      },
+      "asr": {
+        "selected_mic_id": "",
+        "auto_stop_mic": false,
+        "auto_start_mic_on": false,
+        "auto_start_mic_on_conv_end": false,
+        "positive_speech_threshold": 50,
+        "negative_speech_threshold": 35,
+        "redemption_frames": 35
+      },
+      "agent": {
+        "allow_proactive_speak": false,
+        "idle_seconds_to_speak": 5,
+        "allow_button_trigger": false
+      }
+    },
+    "items": {
+      "general": {
+        "description": "常规设置",
+        "type": "object",
+        "items": {
+          "language": {
+            "description": "WebUI 语言",
+            "type": "string",
+            "default": "zh",
+            "options": [
+              "zh",
+              "en"
+            ],
+            "labels": [
+              "中文",
+              "English"
+            ]
+          },
+          "background_url": {
+            "description": "背景图片 URL。可填 /bg/... 或完整 http(s) URL。",
+            "type": "string",
+            "default": ""
+          },
+          "use_camera_background": {
+            "description": "使用摄像头作为背景",
+            "type": "bool",
+            "default": false
+          },
+          "show_subtitle": {
+            "description": "显示字幕",
+            "type": "bool",
+            "default": true
+          },
+          "ws_url": {
+            "description": "WebUI 连接的 WebSocket 地址",
+            "type": "string",
+            "default": "ws://127.0.0.1:12396"
+          },
+          "base_url": {
+            "description": "WebUI 访问静态资源和媒体的 HTTP 地址",
+            "type": "string",
+            "default": "http://127.0.0.1:12397"
+          },
+          "image_compression_quality": {
+            "description": "图片输入压缩质量，范围 0.1-1.0。",
+            "type": "float",
+            "default": 0.8
+          },
+          "image_max_width": {
+            "description": "图片输入最大宽度。0 表示不限制。",
+            "type": "int",
+            "default": 0
+          }
+        }
+      },
+      "live2d": {
+        "description": "Live2D 前端交互设置",
+        "type": "object",
+        "items": {
+          "pointer_interactive": {
+            "description": "启用鼠标指针交互",
+            "type": "bool",
+            "default": true
+          },
+          "scroll_to_resize": {
+            "description": "启用滚轮缩放模型",
+            "type": "bool",
+            "default": true
+          }
+        }
+      },
+      "asr": {
+        "description": "语音识别设置",
+        "type": "object",
+        "items": {
+          "selected_mic_id": {
+            "description": "选择的麦克风设备 ID。留空时使用浏览器默认设备。",
+            "type": "string",
+            "default": ""
+          },
+          "auto_stop_mic": {
+            "description": "AI 开始说话时自动关闭麦克风",
+            "type": "bool",
+            "default": false
+          },
+          "auto_start_mic_on": {
+            "description": "AI 被打断时自动开启麦克风",
+            "type": "bool",
+            "default": false
+          },
+          "auto_start_mic_on_conv_end": {
+            "description": "对话结束时自动开启麦克风",
+            "type": "bool",
+            "default": false
+          },
+          "positive_speech_threshold": {
+            "description": "语音识别阈值，范围 1-100。",
+            "type": "int",
+            "default": 50
+          },
+          "negative_speech_threshold": {
+            "description": "负面语音阈值，范围 0-100。",
+            "type": "int",
+            "default": 35
+          },
+          "redemption_frames": {
+            "description": "验证帧数，范围 1-100。",
+            "type": "int",
+            "default": 35
+          }
+        }
+      },
+      "agent": {
+        "description": "代理主动发言设置",
+        "type": "object",
+        "items": {
+          "allow_proactive_speak": {
+            "description": "允许 AI 主动发言",
+            "type": "bool",
+            "default": false
+          },
+          "idle_seconds_to_speak": {
+            "description": "空闲多少秒后 AI 可主动发言",
+            "type": "float",
+            "default": 5
+          },
+          "allow_button_trigger": {
+            "description": "允许通过举手按钮提示 AI 发言",
+            "type": "bool",
+            "default": false
+          }
+        }
+      }
+    }
   }
 }

@@ -35,7 +35,8 @@
       "selectModel": "选择模型",
       "modelListError": "无法读取 live2ds/model_dict.json",
       "pointerInteractive": "鼠标交互",
-      "scrollToResize": "启用滚轮缩放"
+      "scrollToResize": "启用滚轮缩放",
+      "refreshModels": "刷新/识别模型"
     },
     "asr": {
       "microphone": "输入麦克风",
@@ -76,7 +77,8 @@
     "cameraControl": "点击启动摄像头",
     "cameraStopping": "点击停止摄像头",
     "screenControl": "点击开始屏幕共享",
-    "screenStopping": "点击停止屏幕共享"
+    "screenStopping": "点击停止屏幕共享",
+    "sendMessage": "发送消息"
   },
   "sidebar": {
     "camera": "摄像头",
@@ -123,4 +125,4 @@
     "connecting": "连接中",
     "clickToReconnect": "点击重新连接"
   }
-} 
+}

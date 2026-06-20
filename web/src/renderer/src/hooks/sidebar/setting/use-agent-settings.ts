@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useProactiveSpeak } from '@/context/proactive-speak-context';
+import { usePluginSettings } from '@/context/plugin-settings-context';
 
 interface UseAgentSettingsProps {
   onSave?: (callback: () => void) => () => void
@@ -8,6 +9,7 @@ interface UseAgentSettingsProps {
 
 export function useAgentSettings({ onSave, onCancel }: UseAgentSettingsProps = {}) {
   const { settings: persistedSettings, updateSettings } = useProactiveSpeak();
+  const { saveWebUISettings } = usePluginSettings();
 
   const [tempSettings, setTempSettings] = useState({
     allowProactiveSpeak: persistedSettings.allowProactiveSpeak,
@@ -49,8 +51,15 @@ export function useAgentSettings({ onSave, onCancel }: UseAgentSettingsProps = {
 
   const handleSave = useCallback(() => {
     updateSettings(tempSettings);
+    saveWebUISettings({
+      agent: {
+        allow_proactive_speak: tempSettings.allowProactiveSpeak,
+        idle_seconds_to_speak: tempSettings.idleSecondsToSpeak,
+        allow_button_trigger: tempSettings.allowButtonTrigger,
+      },
+    });
     setOriginalSettings(tempSettings);
-  }, [updateSettings, tempSettings]);
+  }, [saveWebUISettings, updateSettings, tempSettings]);
 
   const handleCancel = useCallback(() => {
     setTempSettings(originalSettings);

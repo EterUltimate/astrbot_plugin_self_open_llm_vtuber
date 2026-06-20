@@ -81,6 +81,8 @@ export interface MessageEvent {
   forwarded?: boolean;
   display_text?: DisplayText;
   live2d_model?: string;
+  settings?: WebUISettingsPayload;
+  models?: ModelInfo[];
   browser_view?: {
     debuggerFullscreenUrl: string;
     debuggerUrl: string;
@@ -94,6 +96,37 @@ export interface MessageEvent {
     }[];
     wsUrl: string;
     sessionId?: string;
+  };
+}
+
+export interface WebUISettingsPayload {
+  general?: {
+    language?: string;
+    background_url?: string;
+    use_camera_background?: boolean;
+    show_subtitle?: boolean;
+    ws_url?: string;
+    base_url?: string;
+    image_compression_quality?: number;
+    image_max_width?: number;
+  };
+  live2d?: {
+    pointer_interactive?: boolean;
+    scroll_to_resize?: boolean;
+  };
+  asr?: {
+    selected_mic_id?: string;
+    auto_stop_mic?: boolean;
+    auto_start_mic_on?: boolean;
+    auto_start_mic_on_conv_end?: boolean;
+    positive_speech_threshold?: number;
+    negative_speech_threshold?: number;
+    redemption_frames?: number;
+  };
+  agent?: {
+    allow_proactive_speak?: boolean;
+    idle_seconds_to_speak?: number;
+    allow_button_trigger?: boolean;
   };
 }
 
@@ -127,6 +160,12 @@ class WebSocketService {
   }
 
   private initializeConnection() {
+    this.sendMessage({
+      type: 'fetch-webui-settings',
+    });
+    this.sendMessage({
+      type: 'fetch-live2d-models',
+    });
     this.sendMessage({
       type: 'fetch-backgrounds',
     });

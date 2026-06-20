@@ -6,6 +6,7 @@ interface FooterStyles {
   actionButton: SystemStyleObject
   input: SystemStyleObject
   attachButton: SystemStyleObject
+  sendButton: SystemStyleObject
 }
 
 interface AIIndicatorStyles {
@@ -67,7 +68,7 @@ export const footerStyles: {
       borderRadius: '8px',
       fontSize: '15px',
       pl: '12',
-      pr: '4',
+      pr: '12',
       color: 'var(--olv-text)',
       boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.04)',
       _placeholder: {
@@ -105,6 +106,25 @@ export const footerStyles: {
       _hover: {
         bg: 'rgba(255,255,255,0.06)',
         color: 'var(--olv-text)',
+      },
+    },
+    sendButton: {
+      position: 'absolute',
+      right: '2',
+      top: '50%',
+      transform: 'translateY(-50%)',
+      color: 'var(--olv-text)',
+      bg: 'rgba(255,255,255,0.08)',
+      zIndex: 2,
+      width: '36px',
+      height: '36px',
+      minW: '36px',
+      borderRadius: '8px',
+      _hover: {
+        bg: 'rgba(255,255,255,0.14)',
+      },
+      _active: {
+        bg: 'rgba(255,255,255,0.1)',
       },
     },
   },

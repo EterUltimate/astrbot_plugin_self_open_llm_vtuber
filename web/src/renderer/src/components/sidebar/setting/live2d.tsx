@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { settingStyles } from './setting-styles';
 import { useLive2dSettings } from '@/hooks/sidebar/setting/use-live2d-settings';
 import { SelectField, SwitchField } from './common';
+import { Button } from '@/components/ui/button';
 
 interface live2DProps {
   onSave?: (callback: () => void) => () => void
@@ -20,6 +21,7 @@ function live2D({ onSave, onCancel }: live2DProps): JSX.Element {
     modelListStatus,
     selectedModelName,
     setSelectedModelName,
+    refreshLive2DModels,
     handleInputChange,
     handleSave,
     handleCancel,
@@ -46,6 +48,14 @@ function live2D({ onSave, onCancel }: live2DProps): JSX.Element {
         collection={modelCollection}
         placeholder={t('settings.live2d.selectModel')}
       />
+
+      <Button
+        size="sm"
+        variant="outline"
+        onClick={refreshLive2DModels}
+      >
+        {t('settings.live2d.refreshModels')}
+      </Button>
 
       {modelListStatus === 'error' && (
         <Text {...settingStyles.live2d.statusText}>

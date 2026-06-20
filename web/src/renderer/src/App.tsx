@@ -11,6 +11,8 @@ import { SubtitleProvider } from "./context/subtitle-context";
 import { BgUrlProvider } from "./context/bgurl-context";
 import { layoutStyles } from "./layout";
 import WebSocketHandler from "./services/websocket-handler";
+import { WebSocketProvider } from "./context/websocket-context";
+import { PluginSettingsProvider } from "./context/plugin-settings-context";
 import { CameraProvider } from "./context/camera-context";
 import { ChatHistoryProvider } from "./context/chat-history-context";
 import { CharacterConfigProvider } from "./context/character-config-context";
@@ -27,6 +29,7 @@ import "@chatscope/chat-ui-kit-styles/dist/default/styles.min.css";
 import Background from "./components/canvas/background";
 import WebSocketStatus from "./components/canvas/ws-status";
 import Subtitle from "./components/canvas/subtitle";
+import PluginSettingsApplier from "./components/plugin-settings-applier";
 import { ModeProvider, useMode } from "./context/mode-context";
 import { PetOverlayWindow } from "./components/electron/pet-overlay-window";
 import { usePetOverlayBridge } from "./hooks/utils/use-pet-overlay-bridge";
@@ -120,21 +123,11 @@ function AppContent(): JSX.Element {
     pointerEvents: "auto" as const,
   };
 
-  // Define styles specifically for the "window" mode, using responsive syntax
-  const getResponsiveLive2DWindowStyle = (sidebarVisible: boolean) => ({
+  const live2dWindowStyle = {
     ...live2dBaseStyle,
-    top: isElectron ? "30px" : "0px",
-    height: `calc(100% - ${isElectron ? "30px" : "0px"})`,
+    inset: 0,
     zIndex: 5, // Ensure it's layered correctly below UI but above background
-    left: {
-      base: "0px", // Column layout (base): Start from left edge
-      md: sidebarVisible ? "440px" : "24px", // Row layout (md+): Offset by sidebar width
-    },
-    width: {
-      base: "100%", // Column layout (base): Full width
-      md: `calc(100% - ${sidebarVisible ? "440px" : "24px"})`, // Row layout (md+): Adjust width based on sidebar
-    },
-  });
+  };
 
   // Define styles specifically for the "pet" mode
   const live2dPetStyle = {
@@ -148,16 +141,11 @@ function AppContent(): JSX.Element {
 
   return (
     <>
-      <Box
-        ref={live2dContainerRef}
-        // Apply styles conditionally based on mode
-        // Use the function to get dynamic responsive styles for window mode
-        {...(mode === "window"
-          ? getResponsiveLive2DWindowStyle(showSidebar)
-          : live2dPetStyle)}
-      >
-        <Live2D />
-      </Box>
+      {mode === "pet" && (
+        <Box ref={live2dContainerRef} {...live2dPetStyle}>
+          <Live2D />
+        </Box>
+      )}
 
       {/* Conditional Rendering of Window UI */}
       {mode === "window" && (
@@ -176,6 +164,9 @@ function AppContent(): JSX.Element {
             </Box>
             <Box {...layoutStyles.mainContent}>
               <Background />
+              <Box ref={live2dContainerRef} {...live2dWindowStyle}>
+                <Live2D showSidebar={showSidebar} />
+              </Box>
               <Box position="absolute" top="20px" left="20px" zIndex={10}>
                 <WebSocketStatus />
               </Box>
@@ -235,24 +226,29 @@ function AppWithGlobalStyles(): JSX.Element {
     <>
       {/* 【P1 修复】低频提供者在外层（用 memo 保护） */}
       <LowFrequencyProviders>
-        {/* 【P1 修复】高频提供者在内层（使用 useMemo 进一步优化） */}
-        <ChatHistoryProvider>
-          <AiStateProvider>
-            <ProactiveSpeakProvider>
-              <Live2DConfigProvider>
-                <SubtitleProvider>
-                  <VADProvider>
-                    <WebSocketHandler>
-                      <PetOverlayBridge />
-                      <Toaster />
-                      <AppContent />
-                    </WebSocketHandler>
-                  </VADProvider>
-                </SubtitleProvider>
-              </Live2DConfigProvider>
-            </ProactiveSpeakProvider>
-          </AiStateProvider>
-        </ChatHistoryProvider>
+        <WebSocketProvider>
+          <PluginSettingsProvider>
+            {/* 【P1 修复】高频提供者在内层（使用 useMemo 进一步优化） */}
+            <ChatHistoryProvider>
+              <AiStateProvider>
+                <ProactiveSpeakProvider>
+                  <Live2DConfigProvider>
+                    <SubtitleProvider>
+                      <VADProvider>
+                        <WebSocketHandler>
+                          <PluginSettingsApplier />
+                          <PetOverlayBridge />
+                          <Toaster />
+                          <AppContent />
+                        </WebSocketHandler>
+                      </VADProvider>
+                    </SubtitleProvider>
+                  </Live2DConfigProvider>
+                </ProactiveSpeakProvider>
+              </AiStateProvider>
+            </ChatHistoryProvider>
+          </PluginSettingsProvider>
+        </WebSocketProvider>
       </LowFrequencyProviders>
     </>
   );

@@ -3,6 +3,7 @@ import {
   useState, useEffect, useMemo, useCallback, useRef,
 } from 'react';
 import { ModelInfo, useLive2DConfig } from '@/context/live2d-config-context';
+import { usePluginSettings } from '@/context/plugin-settings-context';
 import { useWebSocket } from '@/context/websocket-context';
 
 interface Live2DModelOption {
@@ -19,6 +20,11 @@ type ModelDictEntry = {
 export const useLive2dSettings = () => {
   const Live2DConfigContext = useLive2DConfig();
   const { baseUrl, sendMessage } = useWebSocket();
+  const {
+    live2dModelEntries,
+    refreshLive2DModels,
+    saveWebUISettings,
+  } = usePluginSettings();
 
   const initialModelInfo: ModelInfo = {
     url: '',
@@ -53,6 +59,23 @@ export const useLive2dSettings = () => {
       value: model.value,
     })),
   }), [modelOptions]);
+
+  useEffect(() => {
+    if (!live2dModelEntries.length) {
+      return;
+    }
+
+    const nextOptions = live2dModelEntries
+      .filter((item) => typeof item?.name === 'string' && item.name.trim())
+      .map((item) => ({
+        label: item.name!.trim(),
+        value: item.name!.trim(),
+        description: typeof item.description === 'string' ? item.description : '',
+      }));
+
+    setModelOptions(nextOptions);
+    setModelListStatus('ready');
+  }, [live2dModelEntries]);
 
   useEffect(() => {
     if (Live2DConfigContext?.modelInfo) {
@@ -93,7 +116,7 @@ export const useLive2dSettings = () => {
             description: typeof item.description === 'string' ? item.description : '',
           }));
 
-        if (!cancelled) {
+        if (!cancelled && live2dModelEntries.length === 0) {
           setModelOptions(nextOptions);
           setModelListStatus('ready');
         }
@@ -110,7 +133,7 @@ export const useLive2dSettings = () => {
     return () => {
       cancelled = true;
     };
-  }, [baseUrl]);
+  }, [baseUrl, live2dModelEntries.length]);
 
   useEffect(() => {
     if (Live2DConfigContext && modelInfo) {
@@ -151,7 +174,13 @@ export const useLive2dSettings = () => {
     if (Live2DConfigContext && modelInfo) {
       setOriginalModelInfo(modelInfo);
     }
-  }, [Live2DConfigContext, modelInfo]);
+    saveWebUISettings({
+      live2d: {
+        pointer_interactive: modelInfo.pointerInteractive ?? true,
+        scroll_to_resize: modelInfo.scrollToResize ?? true,
+      },
+    });
+  }, [Live2DConfigContext, modelInfo, saveWebUISettings]);
 
   const handleCancel = useCallback((): void => {
     setModelInfoState(originalModelInfo);
@@ -168,6 +197,7 @@ export const useLive2dSettings = () => {
     modelListStatus,
     selectedModelName,
     setSelectedModelName,
+    refreshLive2DModels,
     handleInputChange,
     handleSave,
     handleCancel,

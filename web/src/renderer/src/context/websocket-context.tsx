@@ -1,5 +1,7 @@
 /* eslint-disable react/jsx-no-constructed-context-values */
-import React, { useContext, useCallback } from 'react';
+import React, {
+  useContext, useCallback, useEffect, useState,
+} from 'react';
 import { wsService } from '@/services/websocket-service';
 import { useLocalStorage } from '@/hooks/utils/use-local-storage';
 
@@ -50,19 +52,43 @@ export const defaultBaseUrl = DEFAULT_BASE_URL;
 export function WebSocketProvider({ children }: { children: React.ReactNode }) {
   const [wsUrl, setWsUrl] = useLocalStorage('wsUrl', DEFAULT_WS_URL);
   const [baseUrl, setBaseUrl] = useLocalStorage('baseUrl', DEFAULT_BASE_URL);
+  const [wsState, setWsState] = useState<string>(wsService.getCurrentState());
+
   const handleSetWsUrl = useCallback((url: string) => {
-    setWsUrl(url);
-    wsService.connect(url);
+    setWsUrl((currentUrl) => (currentUrl === url ? currentUrl : url));
   }, [setWsUrl]);
 
+  const handleSetBaseUrl = useCallback((url: string) => {
+    setBaseUrl((currentUrl) => (currentUrl === url ? currentUrl : url));
+  }, [setBaseUrl]);
+
+  const sendMessage = useCallback((message: object) => {
+    wsService.sendMessage(message);
+  }, []);
+
+  const reconnect = useCallback(() => {
+    wsService.connect(wsUrl);
+  }, [wsUrl]);
+
+  useEffect(() => {
+    wsService.connect(wsUrl);
+  }, [wsUrl]);
+
+  useEffect(() => {
+    const stateSubscription = wsService.onStateChange(setWsState);
+    return () => {
+      stateSubscription.unsubscribe();
+    };
+  }, []);
+
   const value = {
-    sendMessage: wsService.sendMessage.bind(wsService),
-    wsState: 'CLOSED',
-    reconnect: () => wsService.connect(wsUrl),
+    sendMessage,
+    wsState,
+    reconnect,
     wsUrl,
     setWsUrl: handleSetWsUrl,
     baseUrl,
-    setBaseUrl,
+    setBaseUrl: handleSetBaseUrl,
   };
 
   return (

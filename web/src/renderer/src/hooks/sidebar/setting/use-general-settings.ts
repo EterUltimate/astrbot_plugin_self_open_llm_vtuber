@@ -5,6 +5,7 @@ import { BgUrlContextState } from '@/context/bgurl-context';
 import { defaultBaseUrl, defaultWsUrl } from '@/context/websocket-context';
 import { useSubtitle } from '@/context/subtitle-context';
 import { useCamera } from '@/context/camera-context';
+import { usePluginSettings } from '@/context/plugin-settings-context';
 import i18n from 'i18next';
 
 export const IMAGE_COMPRESSION_QUALITY_KEY = 'appImageCompressionQuality';
@@ -67,6 +68,7 @@ export const useGeneralSettings = ({
   onCancel,
 }: UseGeneralSettingsProps) => {
   const { showSubtitle, setShowSubtitle } = useSubtitle();
+  const { saveWebUISettings } = usePluginSettings();
   const { setUseCameraBackground } = bgUrlContext || {};
   const { startBackgroundCamera, stopBackgroundCamera } = useCamera();
 
@@ -153,6 +155,19 @@ export const useGeneralSettings = ({
 
   const handleSave = (): void => {
     setOriginalSettings(settings);
+    const backgroundUrl = settings.customBgUrl || settings.selectedBgUrl[0] || settings.backgroundUrl;
+    saveWebUISettings({
+      general: {
+        language: settings.language[0] || i18n.language || 'en',
+        background_url: backgroundUrl,
+        use_camera_background: settings.useCameraBackground,
+        show_subtitle: settings.showSubtitle,
+        ws_url: settings.wsUrl,
+        base_url: settings.baseUrl,
+        image_compression_quality: settings.imageCompressionQuality,
+        image_max_width: settings.imageMaxWidth,
+      },
+    });
   };
 
   const handleCancel = (): void => {
